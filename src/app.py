@@ -24,20 +24,24 @@ PICTURES_DIR = 'pictures/'
 def inactivityKiller():
     while True:
         time.sleep(EMPTY_LOBBY_LIMIT)
+        
+        i = 0
         for lobby in lobbies:
-            for i in range(len(lobby.players)):
-                if lobby.players[i].lastSeen < time.time() - INACTIVE_PLAYER_LIMIT: # If player didnt report being alive for INACTIVE_PLAYER_LIMIT destroy him
-                    lobby.pushEvent(PlayerLeftEvent(lobby.players[i]))
-                    print("Player {} ({}) was exterminated due to lack of activity".format(lobby.players[i].id, lobby.players[i].nick))
-                    lobby.players.pop(i)
+            for j in range(len(lobby.players)):
+                if lobby.players[j].lastSeen < time.time() - INACTIVE_PLAYER_LIMIT: # If player didnt report being alive for INACTIVE_PLAYER_LIMIT destroy him
+                    lobby.pushEvent(PlayerLeftEvent(lobby.players[j]))
+                    print("Player {} ({}) was exterminated due to lack of activity".format(lobby.players[j].id, lobby.players[j].nick))
+                    lobby.players.pop(j)
 
-        if not len(lobby.players):
-            print('Lobby {} was killed due to lack of players.'.format(lobby.id))
-            lobbies.pop(i)
-            break
-        print('Lobby {} is still alive with {} players'.format(lobby.id, len(lobby.players)))
+            if not len(lobby.players):
+                print('Lobby {} was killed due to lack of players.'.format(lobby.id))
+                lobbies.pop(i)
+                break
+            print('Lobby {} is still alive with {} players'.format(lobby.id, len(lobby.players)))
 
-threading.Thread(target=inactivityKiller).start()
+            i+=1
+
+threading.Thread(target=inactivityKiller, daemon=True).start()
 
 def auth(lobbyId, token):
     for lobby in lobbies:
@@ -215,4 +219,4 @@ def getPicture(lobbyId, token):
 # start flask
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port='443', ssl_context='adhoc')
+    app.run(host='0.0.0.0', port='444', ssl_context=('cert.pem', 'key.pem'))
