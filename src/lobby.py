@@ -66,7 +66,7 @@ class Lobby:
             self.state = 'phase1'
         elif self.state == 'phase1':
             self.state = 'phase2'
-            threading.Thread(target=self.phase2timeLimiter).start()
+            threading.Thread(target=self.phase2timeLimiter, daemon=True).start()
         elif self.state == 'phase2':
             self.state = 'summary'
 
